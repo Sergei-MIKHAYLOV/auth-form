@@ -1,0 +1,62 @@
+/* ==================== БАЗОВЫЕ СТИЛИ ==================== */
+:root {
+  --color-primary: #5675ff;
+  /* --color-primary: #4361ee; */
+  --color-primary-dark: #526ff0;
+  /* --color-primary-dark: #3a56d4; */
+  --color-success: #4CAF50;
+  --color-success-dark: #4caf4fe3;
+  /* --color-success: #4CAF50; */
+  --color-danger: #f44336;
+  --color-danger-dark: #d32f2f;
+  --color-text: #333;
+  --color-text-secondary: #666;
+  --color-text-light: #999;
+  --color-bg: #fff;
+  /* --color-bg: #f9f9f9; */
+  --color-white: #fff;
+  --color-border: #e0e0e0;
+  --color-modal-overlay: rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
+  --shadow-lg: 0 6px 30px rgba(0,0,0,0.2);
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --header-height: 60px;
+  --transition-fast: 0.2s;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}

@@ -1,0 +1,257 @@
+/* ==================== МОДАЛЬНЫЕ ОКНА ==================== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-modal-overlay);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-overlay.show {
+  display: flex;
+}
+
+.modal {
+  background: var(--color-white);
+  padding: 36px;
+  border-radius: var(--radius-lg);
+  width: 480px;
+  max-width: 90vw;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--color-text-light);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.modal-close:hover {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* Вкладки */
+.tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 12px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  border-bottom: 3px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.tab-btn.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+/* Формы */
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.form-label {
+  display: block;
+  margin: 12px 0 6px;
+}
+
+.form-label > span {
+  font-weight: bold;
+  color: var(--color-text);
+  font-size: 16px;
+}
+
+.form-label:not(.optional) > span::after {
+  content: " *";
+  color: var(--color-danger);
+  margin-left: 2px;
+}
+
+.form-label > input {
+  width: 100%;
+  padding: 15px;
+  margin-top: 6px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+.form-label > input::placeholder {
+  color: var(--color-text-light);
+  opacity: 1;
+}
+
+/* Кнопки форм */
+.full-width-btn {
+  width: 100%;
+  padding: 14px;
+  margin-top: 20px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 18px;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.login-btn {
+  background: var(--color-success);
+  color: var(--color-white);
+}
+
+.login-btn:hover {
+  background: var(--color-success-dark);
+}
+
+.register-btn {
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
+.register-btn:hover {
+  background: var(--color-primary-dark);
+}
+
+.btn-primary {
+  padding: 10px 20px;
+  background: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 15px;
+  transition: background var(--transition-fast);
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-dark);
+}
+
+.btn-primary:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.btn-danger {
+  padding: 10px 20px;
+  background: var(--color-danger);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 15px;
+  transition: background var(--transition-fast);
+}
+
+.btn-danger:hover {
+  background: var(--color-danger-dark);
+}
+
+.btn-secondary {
+  padding: 10px 20px;
+  background: #f5f5f5;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 15px;
+  transition: background var(--transition-fast);
+}
+
+.btn-secondary:hover {
+  background: #e9e9e9;
+}
+
+/* ==================== МОДАЛЬНОЕ ОКНО ПОДТВЕРЖДЕНИЯ ==================== */
+.confirm-modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-modal-overlay);
+  z-index: 10000;
+  justify-content: center;
+  align-items: center;
+}
+
+.confirm-modal-overlay.show {
+  display: flex;
+}
+
+.confirm-modal {
+  background: var(--color-white);
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  max-width: 500px;
+  width: 90vw;
+  box-shadow: var(--shadow-lg);
+}
+
+.confirm-modal-title {
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.confirm-modal-text {
+  margin: 0 0 24px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+.confirm-modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* TEXTAREA для отзывов */
+.review-textarea {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  resize: vertical;
+  min-height: 100px;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.review-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}

@@ -1,0 +1,5 @@
+id,name,description,is_active
+1,admin,"Полный доступ ко всем ресурсам",True
+2,moderator,"Модерация контента",True
+3,user,"Обычный пользователь",True
+4,guest,"Гость без авторизации",True

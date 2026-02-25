@@ -1,0 +1,62 @@
+/* ==================== ПАНЕЛЬ ПРОФИЛЯ ==================== */
+#profilePanel {
+  position: fixed;
+  top: 0;
+  left: -300px;
+  width: 300px;
+  height: 100vh;
+  background: var(--color-white);
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.15);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  transition: left 0.3s cubic-bezier(0.17, 0.67, 0.88, 1);
+  /* 🔧 Увеличиваем z-index, чтобы панель была ПОВЕРХ header */
+  z-index: 999;  /* Было 999 */
+  padding: 24px;
+  overflow-y: auto;
+  display: none;
+  /* 🔧 Добавляем отступ сверху, чтобы контент не заезжал под header */
+  padding-top: calc(var(--header-height) + 24px);
+}
+
+
+
+#profilePanel h3 {
+  margin-top: 0;
+  color: var(--color-text);
+  font-size: 20px;
+}
+
+#profilePanel p {
+  margin: 12px 0;
+  color: var(--color-text-secondary);
+}
+
+#profilePanel button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 16px;
+  transition: background var(--transition-fast);
+}
+
+#profilePanel #editProfileBtn {
+  background: var(--color-success);
+  color: var(--color-white);
+}
+
+#profilePanel #editProfileBtn:hover {
+  background: var(--color-success);
+}
+
+#profilePanel #deleteAccountBtn {
+  background: var(--color-danger);
+  color: var(--color-white);
+  margin-top: 8px;
+}
+
+#profilePanel #deleteAccountBtn:hover {
+  background: var(--color-danger-dark);
+}

@@ -1,0 +1,218 @@
+/* ==================== ПРАВАЯ КОЛОНКА - ОПИСАНИЕ И ОТЗЫВЫ ==================== */
+.book-info-sidebar {
+  grid-column: 3;
+  position: sticky;
+  top: calc(var(--header-height) + 24px);
+  height: fit-content;
+  max-height: calc(100vh - var(--header-height) - 48px);
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 🔧 ВНЕШНИЙ КОНТЕЙНЕР — занимает всё доступное место */
+.book-info-outer-scroll {
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  padding-right: 4px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.book-info-outer-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+#bookTitle {
+  font-size: 24px;
+  margin: 0 0 8px 0;
+  color: var(--color-text);
+  flex-shrink: 0;
+}
+
+.book-author {
+  font-size: 16px;
+  color: var(--color-text-secondary);
+  margin: 0 0 16px 0;
+  font-style: italic;
+  flex-shrink: 0;
+}
+
+.book-description-section {
+  margin-bottom: 24px;
+  flex-shrink: 0;
+}
+
+.book-description-section h4 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  color: var(--color-text);
+}
+
+.book-description {
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  white-space: pre-line;
+  margin: 0 0 24px 0;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: none;
+}
+
+.book-description::-webkit-scrollbar {
+  display: none;
+}
+
+/* 🔧 СЕКЦИЯ ОТЗЫВОВ — только контейнер для скролла */
+.reviews-section {
+  display: flex;
+  flex-direction: column;
+  /* 🔑 Занимает оставшееся место */
+  flex: 1;
+  min-height: 0;
+  /* 🔧 УБРАЛ overflow: hidden — он блокировал sticky! */
+}
+
+/* 🔧 HEADER ОТЗЫВОВ — ПРИЛИПАЮЩИЙ */
+.reviews-header {
+  /* 🔑 КЛЮЧЕВЫЕ СВОЙСТВА */
+  position: sticky;
+  top: 0;
+  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  background: var(--color-white);
+  z-index: 10;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--color-border);
+  border-top: 1px solid var(--color-border);
+  /* 🔧 УБРАЛ flex-shrink: 0 — не нужен */
+}
+
+.reviews-header h4 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--color-text);
+}
+
+/* 🔧 ВНУТРЕННИЙ КОНТЕЙНЕР для отзывов */
+.reviews-scroll-container {
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  padding-right: 4px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.reviews-scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 8px;
+}
+
+.review-item {
+  padding: 16px;
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  /* 🔧 ДОБАВЛЕНО: позиционирование для кнопок */
+  position: relative;
+}
+
+/* 🔧 КОНТЕЙНЕР КНОПОК — скрыт по умолчанию */
+.review-actions {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+  /* 🔑 Скрыто по умолчанию */
+  opacity: 0;
+  /* 🔑 Плавное появление */
+  transition: opacity var(--transition-fast);
+  pointer-events: none; /* Чтобы не мешали, когда скрыты */
+}
+
+/* 🔧 Показываем кнопки при наведении на отзыв */
+.review-item:hover .review-actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 🔧 Стили кнопок */
+.review-action-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  padding: 0;
+  font-size: 16px;
+}
+
+.review-action-btn:hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-white);
+  transform: scale(1.1);
+}
+
+.review-action-btn.delete:hover {
+  background: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+/* Иконки внутри кнопок */
+.review-action-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.review-author {
+  font-weight: 600;
+  color: var(--color-text);
+  font-size: 14px;
+}
+
+.review-date {
+  font-size: 12px;
+  color: var(--color-text-light);
+}
+
+.review-content {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.no-reviews {
+  text-align: center;
+  color: var(--color-text-light);
+  padding: 20px;
+  font-style: italic;
+}

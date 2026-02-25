@@ -1,0 +1,70 @@
+# === Виртуальные окружения ===
+.venv/
+venv/
+env/
+ENV/
+
+# === Системные и временные файлы ===
+test*
+*.tmp
+*.log
+*.swp
+*.swo
+Thumbs.db
+desktop.ini
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# === Секреты и ключи ===
+.env*
+*.env
+*.key
+*.pem
+*.crt
+*.cert
+
+# === Базы данных ===
+*.db
+*.sqlite
+
+# === IDE и редакторы ===
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# === Python артефакты ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+test*
+
+# === Git, Docker, документация ===
+.git
+.gitignore
+Dockerfile
+docker-compose.yaml
+README.md
+*.png

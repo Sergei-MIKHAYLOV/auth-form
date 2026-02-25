@@ -1,0 +1,9 @@
+id,email,name,family_name,patronymic,password,is_active
+1,admin@bookreviews.com,admin,,,$2b$12$KQ472LifNPtCaV1WPw2BQOOgA7uywcPBtyK3vFzg0JVGlMb20WOkK,true
+2,moderator1@bookreviews.com,moderator1,,,$2b$12$KQ472LifNPtCaV1WPw2BQOOgA7uywcPBtyK3vFzg0JVGlMb20WOkK,true
+3,moderator2@bookreviews.com,moderator2,,,$2b$12$KQ472LifNPtCaV1WPw2BQOOgA7uywcPBtyK3vFzg0JVGlMb20WOkK,true
+4,user1@bookreviews.com,user1,,,$2b$12$KQ472LifNPtCaV1WPw2BQOOgA7uywcPBtyK3vFzg0JVGlMb20WOkK,true
+5,user2@bookreviews.com,user2,,,$2b$12$KQ472LifNPtCaV1WPw2BQOOgA7uywcPBtyK3vFzg0JVGlMb20WOkK,true
+6,user3@bookreviews.com,user3,,,$2b$12$KQ472LifNPtCaV1WPw2BQOOgA7uywcPBtyK3vFzg0JVGlMb20WOkK,true
+7,user4@bookreviews.com,user4,,,$2b$12$KQ472LifNPtCaV1WPw2BQOOgA7uywcPBtyK3vFzg0JVGlMb20WOkK,true
+8,user5@bookreviews.com,user5,,,$2b$12$KQ472LifNPtCaV1WPw2BQOOgA7uywcPBtyK3vFzg0JVGlMb20WOkK,true

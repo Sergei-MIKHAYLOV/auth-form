@@ -1,0 +1,80 @@
+services:
+
+  web:
+    build: .
+    container_name: jwt-auth-form
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - ./mock-data:/home/app/mock-ro
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    depends_on:
+      postgresDB:
+        condition: service_healthy
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '5'
+        compress: 'true'
+    networks:
+      - app_network
+
+  postgresDB:
+    image: postgres:17-alpine
+    container_name: postgres
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - ${DB_PORT}:5432
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '5'
+        compress: 'true'
+    networks:
+      - app_network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    env_file:
+      - .env
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - ${PGADMIN_PORT}:80
+    restart: unless-stopped
+    depends_on:
+      postgresDB:
+        condition: service_healthy
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '5'
+        compress: 'true'
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    name: app_network

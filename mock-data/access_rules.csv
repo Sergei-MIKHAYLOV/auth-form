@@ -1,0 +1,13 @@
+﻿id,role_id,resource_id,create_permission,read_permission,read_all_permission,update_permission,update_all_permission,delete_permission,delete_all_permission,change_user_role_permission,user_ban_permission,is_active
+1,1,1,True,True,True,True,True,True,True,True,True,True
+2,1,2,True,True,True,True,True,True,True,True,True,True
+3,1,3,True,True,True,True,True,True,True,True,True,True
+4,1,4,True,True,True,True,True,True,True,True,True,True
+5,1,5,True,True,True,True,True,True,True,True,True,True
+6,2,1,False,True,True,False,False,False,False,False,True,True
+7,2,4,True,True,True,True,True,True,False,False,True,True
+8,2,5,True,True,True,True,True,True,True,False,True,True
+10,3,4,False,True,True,False,False,False,False,False,False,True
+11,3,5,True,True,True,True,False,True,False,False,False,True
+12,4,4,False,True,False,False,False,False,False,False,False,True
+13,4,5,False,True,False,False,False,False,False,False,False,True

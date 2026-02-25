@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Книжные обзоры</title>
+  
+  <!-- CSS модули -->
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/header.css">
+  <link rel="stylesheet" href="./css/layout.css">
+  <link rel="stylesheet" href="./css/books-sidebar.css">
+  <link rel="stylesheet" href="./css/book-main.css">
+  <link rel="stylesheet" href="./css/book-info.css">
+  <link rel="stylesheet" href="./css/modal.css">
+  <link rel="stylesheet" href="./css/profile.css">
+  <link rel="stylesheet" href="./css/utils.css">
+  <link rel="stylesheet" href="./css/admin.css">
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <!-- 🔧 ЛЕВАЯ ЧАСТЬ: Профиль + Админка -->
+  <div class="header-left">
+    <div id="userPanel" title="Мой профиль" style="display: none;">
+      <span id="userName"></span>
+    </div>
+    <button id="adminPanelBtn" class="auth-btn" style="display: none">
+      🛠️ Админ-панель
+    </button>
+    <button id="addBookBtn" class="auth-btn" style="display: none; background: #4CAF50;">
+    📚 Добавить книгу
+    </button>
+  </div>
+  
+  <!-- 🔧 ЦЕНТР: Поиск -->
+  <div class="header-center">
+    <div class="search-container">
+      <input type="text" id="searchInput" class="search-input" placeholder="Поиск книг...">
+      <button id="clearSearchBtn" class="clear-search-btn" style="display: none;">✕</button>
+      <div id="searchSuggestions" class="search-suggestions"></div>
+    </div>
+  </div>
+  
+  <!-- 🔧 ПРАВАЯ ЧАСТЬ: Выйти -->
+  <div class="header-right">
+    <button id="authBtn" class="auth-btn">Вход / Регистрация</button>
+  </div>
+</header>
+
+  <!-- Основной контент -->
+  <div class="main-content">
+    <!-- Левая колонка: список книг -->
+    <aside class="books-sidebar" id="booksList">
+      <h3>Вам может понравиться:</h3>
+      <div class="books-scroll-container" id="booksListContainer">
+        <!-- Сюда JS будет рендерить список -->
+      </div>
+    </aside>
+
+    <!-- Центральная колонка: обложка + кнопки -->
+    <section class="book-main" id="bookMain">
+      <div class="book-cover-wrapper">
+        <img id="mainBookCover" src="./img/book_01.jpg" alt="Обложка книги">
+      </div>
+      <div class="book-actions">
+        <button id="buyBookBtn" class="action-btn primary">Купить и скачать</button>
+        <button id="readFragmentBtn" class="action-btn">Читать фрагмент</button>
+      </div>
+    </section>
+
+<aside class="book-info-sidebar" id="bookInfo">
+  <!-- ВНЕШНИЙ КОНТЕЙНЕР с общим скроллом -->
+  <div class="book-info-outer-scroll">
+    <!-- Описание книги -->
+    <div class="book-description-wrapper">
+      <h2 id="bookTitle">Название книги</h2>
+      <p class="book-author" id="bookAuthor">Автор</p>
+      
+      <div class="book-description-section">
+        <h4>О книге</h4>
+        <p class="book-description" id="bookDescription">Описание...</p>
+      </div>
+    </div>
+    
+    <!-- 🔧 HEADER ОТЗЫВОВ — перенесен НАД reviews-section -->
+    <div class="reviews-header">
+      <h4>Отзывы <span id="reviewsCount">(0)</span></h4>
+      <button id="addReviewBtn" class="small-btn">+ Оставить отзыв</button>
+    </div>
+    
+    <!-- Отзывы — только список -->
+    <div class="reviews-section">
+      <!-- ВНУТРЕННИЙ КОНТЕЙНЕР для скролла отзывов -->
+      <div class="reviews-scroll-container">
+        <div id="reviewsList" class="reviews-list">
+          <!-- Отзывы подгружаются JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+  <!-- Модальное окно авторизации -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="login">Вход</button>
+        <button class="tab-btn" data-tab="register">Регистрация</button>
+      </div>
+
+      <!-- Форма входа -->
+      <form id="loginForm" class="tab-content active">
+        <label class="form-label">
+          <input name="username" type="email" placeholder="e-mail" required>
+        </label>
+        <label class="form-label">
+          <input name="password" type="password" placeholder="пароль" required>
+        </label>
+        <button type="submit" class="full-width-btn login-btn">Войти</button>
+      </form>
+
+      <!-- Форма регистрации -->
+      <form id="registerForm" class="tab-content">
+        <label class="form-label optional">
+          <span>Фамилия</span>
+          <input name="family_name" placeholder="Иванов">
+        </label>
+        <label class="form-label">
+          <span>Имя</span>
+          <input name="name" placeholder="Иван" required>
+        </label>
+        <label class="form-label optional">
+          <span>Отчество</span>
+          <input name="patronymic" placeholder="Иванович">
+        </label>
+        <label class="form-label">
+          <span>Email</span>
+          <input name="email" type="email" placeholder="ivan@example.com" required>
+        </label>
+        <label class="form-label">
+          <span>Пароль</span>
+          <input name="password1" type="password" placeholder="Пароль" required>
+        </label>
+        <label class="form-label">
+          <span>Повтор пароля</span>
+          <input name="password2" type="password" placeholder="Повторите пароль" required>
+        </label>
+        <button type="submit" class="full-width-btn register-btn">Зарегистрироваться</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Выезжающая панель профиля -->
+  <div id="profilePanel">
+    <h3>Мой профиль</h3>
+    <div id="profileData"></div>
+    <button id="editProfileBtn">Редактировать данные</button>
+    <button id="deleteAccountBtn">Удалить аккаунт</button>
+  </div>
+
+  <!-- 🔧 АДМИН-ПАНЕЛЬ (МОДАЛЬНОЕ ОКНО) — обновлённая версия -->
+<div class="admin-modal-overlay" id="adminModal">
+  <div class="admin-modal">
+    <!-- Хедер -->
+    <div class="admin-modal-header">
+      <h3>🛠️ Админ-панель</h3>
+      <button class="admin-modal-close" id="adminModalClose">&times;</button>
+    </div>
+    
+    <!-- Вкладки -->
+    <div class="admin-tabs">
+      <button class="admin-tab-btn active" data-tab="users">Пользователи</button>
+      <button class="admin-tab-btn" data-tab="roles">Роли</button>
+      <button class="admin-tab-btn" data-tab="rules">Правила доступа</button>
+    </div>
+    
+    <!-- Контент: Пользователи -->
+    <div class="admin-tab-content active" id="adminUsersTab">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h4>Список пользователей</h4>
+        <button class="admin-btn secondary" id="refreshUsersBtn">🔄 Обновить</button>
+      </div>
+      
+      <!-- # исправлено: добавлена строка поиска -->
+      <div class="admin-search-bar" style="margin-bottom: 16px; display: flex; gap: 8px;">
+        <input 
+          type="text" 
+          id="adminUserSearch" 
+          placeholder="Поиск по email..." 
+          style="flex: 1; padding: 8px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm);"
+        >
+        <button id="clearSearchBtn" class="admin-action-btn" title="Очистить поиск">✕</button>
+      </div>
+      
+      <div style="overflow-x: auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Имя</th>
+              <th>Email</th>
+              <th>Роли</th>
+              <th>Статус</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody id="adminUsersTableBody">
+            <!-- Заполняется JS -->
+          </tbody>
+        </table>
+      </div>
+      <div class="admin-empty" id="adminUsersEmpty" style="display: none;">
+        <p>Пользователи не найдены</p>
+      </div>
+    </div>
+    
+    <!-- Контент: Роли -->
+    <div class="admin-tab-content" id="adminRolesTab">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h4>Роли в системе</h4>
+        <button class="admin-btn primary" id="addRoleBtn">+ Добавить роль</button>
+      </div>
+      <div style="overflow-x: auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Название</th>
+              <th>Описание</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody id="adminRolesTableBody">
+            <!-- Заполняется JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Контент: Правила доступа -->
+    <div class="admin-tab-content" id="adminRulesTab">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h4>Правила доступа</h4>
+        <button class="admin-btn primary" id="addRuleBtn">+ Добавить правило</button>
+      </div>
+      <div style="overflow-x: auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Роль</th>
+              <th>Ресурс</th>
+              <th>Read</th>
+              <th>Create</th>
+              <th>Update</th>
+              <th>Delete</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody id="adminRulesTableBody">
+            <!-- Заполняется JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== МОДАЛКА: РЕДАКТИРОВАНИЕ РОЛЕЙ ПОЛЬЗОВАТЕЛЯ ==================== -->
+<div id="editUserRolesModal" class="admin-modal-overlay">
+  <div class="admin-modal" style="max-width: 500px;">
+    <div class="admin-modal-header">
+      <h3 id="editUserRolesTitle">Роли пользователя</h3>
+      <button class="admin-modal-close" onclick="adminModule.closeEditUserRolesModal()">×</button>
+    </div>
+    <div class="admin-modal-content active">
+      <input type="hidden" id="editUserRolesUserId">
+      <div id="editUserRolesList" class="permissions-grid" style="margin: 16px 0;"></div>
+      <div class="admin-form-actions">
+        <button class="admin-btn primary" onclick="adminModule.saveUserRoles()">💾 Сохранить</button>
+        <button class="admin-btn secondary" onclick="adminModule.closeEditUserRolesModal()">Отмена</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== МОДАЛКА: РЕДАКТИРОВАНИЕ РОЛИ ==================== -->
+<div id="editRoleModal" class="admin-modal-overlay">
+  <div class="admin-modal" style="max-width: 500px;">
+    <div class="admin-modal-header">
+      <h3 id="editRoleTitle">Редактировать роль</h3>
+      <button class="admin-modal-close" onclick="adminModule.closeEditRoleModal()">×</button>
+    </div>
+    <div class="admin-modal-content active">
+      <input type="hidden" id="editRoleId">
+      <div class="admin-form-group">
+        <label>Название роли</label>
+        <input type="text" id="editRoleName" placeholder="Например: moderator">
+      </div>
+      <div class="admin-form-group">
+        <label>Описание</label>
+        <input type="text" id="editRoleDescription" placeholder="Описание роли">
+      </div>
+      <div class="admin-form-actions">
+        <button class="admin-btn primary" onclick="adminModule.saveRole()">💾 Сохранить</button>
+        <button class="admin-btn secondary" onclick="adminModule.closeEditRoleModal()">Отмена</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== МОДАЛКА: РЕДАКТИРОВАНИЕ ПРАВИЛА ==================== -->
+<div id="editRuleModal" class="admin-modal-overlay">
+  <div class="admin-modal" style="max-width: 600px;">
+    <div class="admin-modal-header">
+      <h3 id="editRuleTitle">Редактировать правило</h3>
+      <button class="admin-modal-close" onclick="adminModule.closeEditRuleModal()">×</button>
+    </div>
+    <div class="admin-modal-content active">
+      <input type="hidden" id="editRuleId">
+      <div class="permissions-grid" style="margin: 16px 0;">
+        <div class="permission-item"><input type="checkbox" id="editRule_read_permission"><label>Чтение</label></div>
+        <div class="permission-item"><input type="checkbox" id="editRule_create_permission"><label>Создание</label></div>
+        <div class="permission-item"><input type="checkbox" id="editRule_update_permission"><label>Обновление</label></div>
+        <div class="permission-item"><input type="checkbox" id="editRule_delete_permission"><label>Удаление</label></div>
+        <div class="permission-item"><input type="checkbox" id="editRule_read_all_permission"><label>Чтение всех</label></div>
+        <div class="permission-item"><input type="checkbox" id="editRule_update_all_permission"><label>Обновление всех</label></div>
+        <div class="permission-item"><input type="checkbox" id="editRule_delete_all_permission"><label>Удаление всех</label></div>
+      </div>
+      <div class="admin-form-actions">
+        <button class="admin-btn primary" onclick="adminModule.saveRule()">💾 Сохранить</button>
+        <button class="admin-btn secondary" onclick="adminModule.closeEditRuleModal()">Отмена</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== МОДАЛКА: ДОБАВИТЬ РОЛЬ ==================== -->
+<div id="addRoleModal" class="admin-modal-overlay">
+  <div class="admin-modal" style="max-width: 500px;">
+    <div class="admin-modal-header">
+      <h3>Добавить роль</h3>
+      <button class="admin-modal-close" onclick="adminModule.closeAddRoleModal()">×</button>
+    </div>
+    <div class="admin-modal-content active">
+      <div class="admin-form-group">
+        <label>Название роли *</label>
+        <input type="text" id="addRoleName" placeholder="Например: moderator" required>
+      </div>
+      <div class="admin-form-group">
+        <label>Описание</label>
+        <input type="text" id="addRoleDescription" placeholder="Описание роли">
+      </div>
+      <div class="admin-form-actions">
+        <button class="admin-btn primary" onclick="adminModule.saveNewRole()">💾 Создать</button>
+        <button class="admin-btn secondary" onclick="adminModule.closeAddRoleModal()">Отмена</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== МОДАЛКА: ДОБАВИТЬ ПРАВИЛО ==================== -->
+<div id="addRuleModal" class="admin-modal-overlay">
+  <div class="admin-modal" style="max-width: 700px;">
+    <div class="admin-modal-header">
+      <h3>Добавить правило доступа</h3>
+      <button class="admin-modal-close" onclick="adminModule.closeAddRuleModal()">×</button>
+    </div>
+    <div class="admin-modal-content active">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+        <div class="admin-form-group">
+          <label>Роль *</label>
+          <select id="addRuleRoleId" required></select>
+        </div>
+        <div class="admin-form-group">
+          <label>Ресурс *</label>
+          <select id="addRuleResourceId" required></select>
+        </div>
+      </div>
+      
+      <div class="permissions-grid" style="margin-bottom: 16px;">
+        <div class="permission-item"><input type="checkbox" id="addRule_read" checked><label>Чтение</label></div>
+        <div class="permission-item"><input type="checkbox" id="addRule_create" checked><label>Создание</label></div>
+        <div class="permission-item"><input type="checkbox" id="addRule_update" checked><label>Обновление</label></div>
+        <div class="permission-item"><input type="checkbox" id="addRule_delete" checked><label>Удаление</label></div>
+        <div class="permission-item"><input type="checkbox" id="addRule_read_all"><label>Чтение всех</label></div>
+        <div class="permission-item"><input type="checkbox" id="addRule_update_all"><label>Обновление всех</label></div>
+        <div class="permission-item"><input type="checkbox" id="addRule_delete_all"><label>Удаление всех</label></div>
+      </div>
+      
+      <div class="admin-form-actions">
+        <button class="admin-btn primary" onclick="adminModule.saveNewRule()">💾 Создать</button>
+        <button class="admin-btn secondary" onclick="adminModule.closeAddRuleModal()">Отмена</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== МОДАЛКА: ДОБАВИТЬ КНИГУ ==================== -->
+<div id="addBookModal" class="admin-modal-overlay">
+  <div class="admin-modal" style="max-width: 700px;">
+    <div class="admin-modal-header">
+      <h3>Добавить книгу</h3>
+      <button class="admin-modal-close" onclick="adminModule.closeAddBookModal()">×</button>
+    </div>
+    <div class="admin-modal-content active">
+      <form id="addBookForm" enctype="multipart/form-data">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="admin-form-group">
+            <label>Название *</label>
+            <input type="text" id="addBookTitle" required>
+          </div>
+          <div class="admin-form-group">
+            <label>Автор</label>
+            <input type="text" id="addBookAuthor">
+          </div>
+        </div>
+        
+        <div class="admin-form-group">
+          <label>Описание *</label>
+          <textarea id="addBookDescription" rows="4" required></textarea>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="admin-form-group">
+            <label>Год издания</label>
+            <input type="number" id="addBookYear" min="1000" max="2100">
+          </div>
+          <div class="admin-form-group">
+            <label>Обложка</label>
+            <input type="file" id="addBookCover" accept="image/*">
+          </div>
+        </div>
+        
+        <div class="admin-form-group">
+          <label>Ссылка на покупку *</label>
+          <input type="url" id="addBookBuyLink" placeholder="https://..." required>
+        </div>
+        
+        <div class="admin-form-group">
+          <label>Ссылка на фрагмент *</label>
+          <input type="url" id="addBookReadLink" placeholder="https://..." required>
+        </div>
+        
+        <div class="admin-form-actions">
+          <button type="button" class="admin-btn primary" onclick="adminModule.saveNewBook()">💾 Создать</button>
+          <button type="button" class="admin-btn secondary" onclick="adminModule.closeAddBookModal()">Отмена</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+  <!-- Toast контейнер -->
+  <div id="toastContainer"></div>
+
+  <!-- Скрипты -->
+  <script src="js/ui-utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/profile.js"></script>
+  <script src="js/books.js"></script>
+  <script src="js/reviews.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

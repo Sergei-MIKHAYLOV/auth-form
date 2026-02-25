@@ -1,0 +1,22 @@
+/* ==================== ОСНОВНАЯ СЕТКА ==================== */
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr 2fr 2fr 1fr;
+  gap: 24px;
+  /* padding: calc(var(--header-height) + 24px) 24px 24px; */
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Адаптация для меньших экранов */
+/* @media (max-width: 1400px) {
+  .main-content {
+    grid-template-columns: 1.5fr 3fr 3fr 1.5fr;
+  }
+}
+
+@media (max-width: 1200px) {
+  .main-content {
+    grid-template-columns: 2fr 3fr 3fr;
+  }
+} */
