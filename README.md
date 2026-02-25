@@ -50,7 +50,7 @@
 | Регистрация | `POST /register` - валидация через Pydantic, SHA256+bcrypt | `api/deps.py::hash_password` |
 | Login | `POST /login` - выдача пары access/refresh JWT | `api/deps.py::generate_token_pair` |
 | Logout | Отзыв токена через `jti` в таблице `sessions` | `db/models.py::UserSession` |
-| Профиль | `GET/PUT /me` - получение и обновление данных | `api/access_control.py` |
+| Профиль | `GET/PUT /me` - получение и обновление данных | `api/routers/access_control.py` |
 | Удаление | `PATCH /me/deactivate` - `is_active=False` + logout | `db/models.py::ActiveMixin` |
 | Идентификация | Middleware + `get_current_user()` подтягивает пользователя по JWT | `api/deps.py`, `api/protect_docs.py` |
 
@@ -85,7 +85,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme),
 
 Пример проверки прав в эндпоинте:
 ```python
-# api/access_control.py
+# api/routers/access_control.py
 @access_control_router.patch('/users/{user_id}/status', summary='Заблокировать/разблокировать пользователя')
 async def change_user_status(user_id: int,
                              is_active: bool = Form(...),
