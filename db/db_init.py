@@ -7,13 +7,11 @@ config = load_config()
 
 engine = create_async_engine(url=config.db.async_url,
                              pool_pre_ping=True,
-                             echo=True
-                             )
+                             echo=True)
 
 AsyncSessionLocal = sessionmaker(bind=engine,
                                  class_=AsyncSession,
-                                 expire_on_commit=False
-                                 )
+                                 expire_on_commit=False)
 
 async def get_db():
     async with AsyncSessionLocal() as session:

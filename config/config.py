@@ -4,6 +4,9 @@ import logging
 from environs import Env
 
 
+env = Env()
+
+
 @dataclass
 class DatabaseSettings:
     db_name: str
@@ -11,14 +14,22 @@ class DatabaseSettings:
     port: int
     user: str
     password: str
+    test_mode: bool
+
+    @property
+    def _current_db_name(self) -> str:
+        if self.test_mode:
+            return env.str('DB_NAME_TEST', default=self.db_name + '_test')
+        return self.db_name
+        
 
     @property
     def sync_url(self) -> str:
-        return f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.db_name}"
+        return f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self._current_db_name}"
     
     @property
     def async_url(self) -> str:
-        return f"postgresql+asyncpg://{self.user}:{self.password}@{self.host}:{self.port}/{self.db_name}"
+        return f"postgresql+asyncpg://{self.user}:{self.password}@{self.host}:{self.port}/{self._current_db_name}"
 
 
 @dataclass
@@ -32,8 +43,8 @@ class Config:
     log: LogSettings
 
 
-def load_config(config_path: str | None = None) -> Config:
-    env = Env()
+def load_config(config_path: str | None = None,
+                test_mode: bool = False) -> Config:
 
     if config_path:
         if not Path(config_path).exists():
@@ -49,6 +60,7 @@ def load_config(config_path: str | None = None) -> Config:
         port=env.int('DB_PORT'),
         user=env.str('DB_USER'),
         password=env.str('DB_PASSWORD'),
+        test_mode=env.bool('TEST_MODE', default=test_mode)
     )
 
     log = LogSettings(

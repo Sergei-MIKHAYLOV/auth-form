@@ -68,6 +68,61 @@ async def get_current_user(token: str = Depends(oauth2_scheme),
     # через selectinload, чтобы избежать N+1
 ```
 
+---
+
+**Архитектура с Service Layer**
+
+Бизнес-логика вынесена из роутеров в отдельные сервисные классы - это обеспечивает:
+- Single Responsibility - роутеры только обрабатывают HTTP, сервисы - бизнес-правила
+- Тестируемость - сервисы можно тестировать изолированно, без HTTP-слоя
+- Повторное использование - одна и та же логика вызывается из разных эндпоинтов
+
+**Структура сервисов:**
+
+| Сервис | Ответственность | Файл |
+|--------|----------------|------|
+| `AccessRuleService` | CRUD правила доступа, валидация дубликатов | `api/services/access_rule_service.py` |
+| `AuthService` | Регистрация, логин, логаут, refresh токенов | `api/services/auth_service.py` |
+| `UserRoleService` | Управление ролями пользователей, поиск, блокировка | `api/services/user_role_service.py` |
+| `UserProfileService` | Управление профилем для пользователей (редактирование / блокировка) | `api/services/user_role_service.py` |
+| `MessageService` / `BookService` | Бизнес-логика для mock-объектов | `api/services/*_service.py` |
+
+
+Пример с `AuthService`:
+
+```python
+# api/services/auth_service.py
+class AuthService:
+    def __init__(self, db: AsyncSession):
+        self.db = db  # ← Зависимость внедряется, легко мокать в тестах
+    
+    async def register_user(self, email: str, ..., password2: str) -> dict:
+        # 1. Валидация
+        # 2. Проверка дубликатов
+        # 3. Хеширование пароля
+        # 4. Создание пользователя + роли + сессии токена
+        # 5. Возврат токенов
+        ...
+    
+    async def refresh_token(self, refresh_token: str) -> str:
+        # 1. Декодирование JWT
+        # 2. Проверка типа токена и срока действия
+        # 3. Поиск сессии в БД по jti
+        # 4. Генерация нового access-токена
+        ...
+```
+
+**Пример использования в роутере:**
+```python
+# api/routers/auth.py
+@auth_router.post('/register')
+async def register_user(..., db: AsyncSession = Depends(get_db)):
+
+    service = AuthService(db)  # Создание сервиса с зависимостью БД
+    token = await service.register_user(...)  # Делегирование бизнес-логики в сервис
+
+    return {'access_token': token['access_token'], ...}  # Форматируем полученный ответ
+```
 
 **2. Система разграничения прав доступа (RBAC)**   
 Система построена на реляционной модели с поддержкой many-to-many связей и гранулярных прав.
@@ -83,7 +138,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme),
 - Middleware для `/docs`: документация видна только admin | `api/protect_docs.py`
 
 
-Пример проверки прав в эндпоинте:
+**Пример проверки прав в эндпоинте:**
 ```python
 # api/routers/access_control.py
 @access_control_router.patch('/users/{user_id}/status', summary='Заблокировать/разблокировать пользователя')
@@ -142,14 +197,82 @@ def check_is_owner_or_has_all_permission(model: SqlModel,
 
 
 ---
-# Что сделано сверх ТЗ:
+### Тестирование (покрытие AuthService)
+
+Для сервиса авторизации реализованы **unit** и **integration** тесты, которые проверяют:
+
+| Тип теста | Что проверяет | Пример |
+|-----------|---------------|--------|
+| **unit** (`tests/unit/test_auth_service.py`) | Логику сервисных методов на тестовой БД | `test_register_user_success`, `test_login_user_wrong_password` |
+| **integration** (`tests/integration/test_auth_endpoints.py`) | Полный HTTP-поток: запрос -> роутер -> сервис -> БД -> ответ | `test_register_endpoint_success`, `test_full_auth_flow` |
+
+### Покрытые сценарии
+
+```
+Регистрация:
+   - успешная регистрация нового пользователя
+   - дубликат email -> 409 Conflict
+   - несовпадающие пароли -> 400 Bad Request
+   - некорректный email -> 400 Bad Request
+
+Вход (login):
+   - успешный вход с выдачей токенов
+   - неверный пароль -> 400 Bad Request
+   - пользователь не найден -> 400 Bad Request
+   - заблокированный пользователь -> 400 Bad Request
+
+Refresh-токен:
+   - успешное обновление access-токена
+   - просроченный refresh-токен -> 401 Unauthorized
+   - передан access-токен вместо refresh -> 400 Bad Request
+   - невалидный JWT -> 401 Unauthorized
+
+Logout:
+   - успешный отзыв токена (is_revoked=True)
+   - невалидный токен -> 400 Bad Request
+
+Полный auth-flow:
+   register -> login -> refresh -> logout -> проверка состояния БД
+```
+
+### Запуск тестов
+
+```bash
+# Запустить только тесты (автоматически поднимет PostgreSQL)
+docker-compose --profile test up --build test
+
+# Запустить конкретный тест
+docker-compose run --rm test pytest tests/unit/test_auth_service.py::test_login_user_success -v
+
+# Запустить все тесты с подробным выводом
+docker-compose run --rm test pytest tests/ -v --tb=short
+```
+
+### Инфраструктура тестов
+
+| Компонент | Назначение |
+|-----------|------------|
+| `tests/conftest.py` | Фикстуры: `test_engine`, `db_session` (с auto-rollback), `test_client` (с подменой `get_db`) |
+| `tests/fixtures/` | Мок-данные: `known_users`, `create_auth_form`, `auth_headers` |
+| `tests/fixtures/csv_data.py` | Авто-загрузка мок-данных из CSV в тестовую БД (`bookreviews_test`) |
+| `pytest.ini` | Настройка asyncio-mode, авто-обнаружение тестов |
+
+### Изоляция тестов
+
+- Каждая тестовая сессия использует `rollback()` - изменения не сохраняются между тестами
+- Тестовая БД `bookreviews_test` отделена от основной `bookreviews`
+- Мок-данные загружаются один раз на сессию (`scope='session'`, `autouse=True`)
+
+
+
+### Что сделано сверх ТЗ:
 
 Фича | Что делает | Где находится
 --- | --- | ---
 Refresh-токены | Безопасное обновление сессии без повторного логина | `api/deps.py::generate_token_pair`
 Фабрика роутеров | DRY: один код для CRUD ролей/ресурсов | `api/utils.py::create_crud_router`
 Асинхронность везде | Производительность, non-blocking I/O | `SQLAlchemy 2.0 async, FastAPI`
-Валидация email | Ранний отсев некорректных данных | `api/utils.py::is_correct_email`
+Валидация email | Ранний отсев некорректных данных | `api/utils.py::validate_email_or_400`
 Логирование | Отладка и аудит действий | `logger.debug()` в `api/deps.py`, `api/protect_docs.py`
 Health-check | Мониторинг состояния сервиса | `GET /health` в `main.py`
 Pre-hash SHA256 + bcrypt | Дополнительный слой защиты паролей | `api/deps.py::hash_password`
@@ -167,6 +290,7 @@ Frontend-заглушка на HTML/JS | для быстрой проверки 
 - Backend: Python 3.13, FastAPI 0.128
 - ORM: SQLAlchemy 2.0+ (асинхронный режим)
 - База данных: PostgreSQL 17
+- Тестирование pytest 9.0, pytest-asyncio, httpx, pytest-mock, Faker
 - Контейнеризация: Docker, Docker Compose
 - Документация: Swagger UI (OpenAPI)
 

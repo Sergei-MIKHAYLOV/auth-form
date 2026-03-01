@@ -117,6 +117,7 @@ def generate_token_pair(email: str) -> dict:
             'refresh_token': refresh_token,
             'refresh_jti': refresh_jti,
             'refresh_expire': refresh_expire,
+            'token_type': 'bearer',
             }
 
 
@@ -205,9 +206,10 @@ def check_not_last_role(user: User) -> bool:
     roles_count =  len(user.user_roles)
     if roles_count > 1:
         return True
+    
+    return False
             
-    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                        detail=f'Нельзя удалить единственную роль пользователя. Добавьте другую роль для удаления текущей')
+    
 
 
 
@@ -236,7 +238,7 @@ def is_owner(obj: SqlModel, user: User) -> bool:
     
     '''
     # Проверка наличия поля 'owner_id' в модели
-    logger.debug(f'hasattr(obj, "owner_id"): {hasattr(obj, 'owner_id')}')   
+    logger.debug(f'hasattr(obj, "owner_id"): {hasattr(obj, "owner_id")}')   
     if hasattr(obj, 'owner_id'):
         logger.debug(f'obj.owner_id: {obj.owner_id}') 
         logger.debug(f'user.id: {user.id}') 

@@ -85,11 +85,16 @@ def sync_sequences(db: Session, tables_list: dict) -> None:
 
 
 
-def init_database_from_csv():
+def init_database_from_csv(db: Session | None = None):
     '''Инициализирует БД и загружает в неё мок-данные'''
 
-    Base.metadata.create_all(bind=engine)
-    db = SessionLocal()
+    if db is None:
+        Base.metadata.create_all(bind=engine)
+        db = SessionLocal()
+        own_session = True
+    else:
+        own_session = False
+
     try:
         db.execute(
             text('''TRUNCATE users, roles, user_roles, resources,
@@ -98,8 +103,10 @@ def init_database_from_csv():
         db.commit()
         load_csv_data(db)
         sync_sequences(db, table_data)
+        
     finally:
-        db.close()
+        if own_session:
+            db.close()
 
 
 

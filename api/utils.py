@@ -10,7 +10,7 @@ from api.deps import get_object_or_404
 
 
 
-def is_correct_email(email: str) -> dict:
+def validate_email_or_400(email: str) -> dict:
     try:
         email = EmailCheck(email=email).email        
     except ValidationError:
